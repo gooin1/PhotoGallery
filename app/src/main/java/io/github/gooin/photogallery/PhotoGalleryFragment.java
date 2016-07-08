@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ public class PhotoGalleryFragment extends Fragment {
 
     private static final String TAG = "PhotoGalleryFragment";
     private List<GalleryItem> mItems = new ArrayList<>();
+    private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
 
     private RecyclerView mPhotoRecyclerView;
 
@@ -35,6 +37,11 @@ public class PhotoGalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         new FetchItemsTask().execute();
+
+        mThumbnailDownloader = new ThumbnailDownloader<>();
+        mThumbnailDownloader.start();
+        mThumbnailDownloader.getLooper();
+        Log.i(TAG, "thread started");
 
     }
 
@@ -54,21 +61,7 @@ public class PhotoGalleryFragment extends Fragment {
         }
     }
 
-    //    private class FetchItemTask extends AsyncTask<void, void, void> {
-//
-//        @Override
-//        protected void doInBackground(void... params) {
-//            try{
-//                String result = new FlickFetchr()
-//                        .getUrlString("http://gooin.github.io");
-//            } catch (IOException e) {
-//                Log.e(TAG, "Failed to fetch URL", e);
-//            }
-//            return null;
-//        }
-//
-//
-//    }
+
     private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
         @Override
         protected List<GalleryItem> doInBackground(Void... params) {
@@ -116,11 +109,20 @@ public class PhotoGalleryFragment extends Fragment {
             GalleryItem galleryItem = mGalleryItems.get(position);
             Drawable placeholder = getResources().getDrawable(R.drawable.ingress);
             photoHolder.bindDrawble(placeholder);
+            mThumbnailDownloader.queueThumbnail(photoHolder, galleryItem.getUrl());
         }
         @Override
         public int getItemCount() {
             return mGalleryItems.size();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mThumbnailDownloader.quit();
+        Log.i(TAG, "thread destroyed");
+
     }
 
 
