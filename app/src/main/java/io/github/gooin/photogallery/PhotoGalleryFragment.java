@@ -1,5 +1,6 @@
 package io.github.gooin.photogallery;
 
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,7 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,15 +83,19 @@ public class PhotoGalleryFragment extends Fragment {
     }
 
 
-
     private class PhotoHolder extends RecyclerView.ViewHolder {
-        private TextView mTitleTextView;
+        private ImageView mImageView;
         public PhotoHolder(View itemView) {
             super(itemView);
-            mTitleTextView = (TextView) itemView;
+            mImageView = (ImageView) itemView.findViewById(R.id.fragmet_photo_gallery_image_view);
         }
-        public void bindGalleryItem(GalleryItem item) {
-            mTitleTextView.setText(item.toString());
+
+        public void bindGalleryItem(Drawable drawable) {
+            mImageView.setImageDrawable(drawable);
+        }
+
+        public void bindDrawble(Drawable placeholder) {
+            mImageView.setImageDrawable(placeholder);
         }
     }
 
@@ -101,13 +106,16 @@ public class PhotoGalleryFragment extends Fragment {
         }
         @Override
         public PhotoHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            TextView textView = new TextView(getActivity());
-            return new PhotoHolder(textView);
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            View view = inflater.inflate(R.layout.galley_item, viewGroup, false);
+            return new PhotoHolder(view);
+
         }
         @Override
         public void onBindViewHolder(PhotoHolder photoHolder, int position) {
             GalleryItem galleryItem = mGalleryItems.get(position);
-            photoHolder.bindGalleryItem(galleryItem);
+            Drawable placeholder = getResources().getDrawable(R.drawable.ingress);
+            photoHolder.bindDrawble(placeholder);
         }
         @Override
         public int getItemCount() {
