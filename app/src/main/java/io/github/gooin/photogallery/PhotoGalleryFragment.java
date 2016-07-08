@@ -80,8 +80,15 @@ public class PhotoGalleryFragment extends Fragment {
     private class FetchItemsTask extends AsyncTask<Void, Void, List<GalleryItem>> {
         @Override
         protected List<GalleryItem> doInBackground(Void... params) {
-            new FlickFetchr().fetchItems();
-            return new FlickFetchr().fetchItems();
+
+            String query ="ingress";
+            if (query == null) {
+               return new FlickFetchr().fetchRecentPhotos();
+            }else{
+                return new FlickFetchr().searchPhotos(query);
+            }
+
+
         }
         @Override
         protected void onPostExecute(List<GalleryItem> items) {
