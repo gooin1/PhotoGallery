@@ -46,6 +46,8 @@ public class PhotoGalleryFragment extends Fragment {
         setHasOptionsMenu(true);
         updateItems();
 
+        PollService.setServiceAlarm(getActivity(), true);
+
 
 
         Handler responseHandler = new Handler();
